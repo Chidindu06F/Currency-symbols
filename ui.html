@@ -2,351 +2,606 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Currency symbols</title>
+
+    <!-- Geist UI font (falls back to system fonts if unavailable). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       :root {
-        --bg: #0b0f14;
-        --surface: #11141a;
-        --item-hover: rgba(255, 255, 255, 0.03);
+        --bg: #0c0c0e;
+        --surface: #151518;
+        --surface-2: #1c1c21;
+        --surface-3: #232329;
+        --border: #2a2a31;
+        --border-strong: #3a3a43;
+        --text: #f2f2f4;
+        --muted: #8b8b95;
+        --muted-2: #6c6c75;
+        --accent: #6d7cff;
+        --accent-hover: #818dff;
+        --accent-soft: rgba(109, 124, 255, 0.14);
+        --danger: #ff6b6b;
+        --success: #44d07b;
         --radius: 10px;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-          Roboto, "Helvetica Neue", Arial;
+        --radius-sm: 8px;
+
+        font-family: "Geist", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       html,
       body {
         height: 100%;
-      }
-      body {
         margin: 0;
-        padding: 12px;
-        box-sizing: border-box;
-        background: linear-gradient(180deg, var(--bg), #07090b 120%);
-        color: #e8e8e8;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.4;
         -webkit-font-smoothing: antialiased;
-        overflow: hidden; /* hide outer scrollbar */
+        text-rendering: optimizeLegibility;
       }
 
-      .card {
-        width: 340px;
-        max-width: calc(
-          100vw - 24px
-        ); /* keep card inside viewport / container */
-        box-sizing: border-box;
-        background: var(--panel);
-        border-radius: 12px;
-        padding: 12px 12px 28px 12px; /* extra bottom padding so last item isn't cut off */
-        overflow: hidden; /* prevent children from visually overflowing */
-        box-shadow: 0 6px 24px rgba(2, 6, 23, 0.6);
-      }
-
-      .header {
+      .app {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
+        flex-direction: column;
+        height: 100vh;
+        padding: 16px;
+        gap: 14px;
+      }
+
+      /* ---------- Header ---------- */
+      .header {
+        flex: 0 0 auto;
       }
       .title {
         font-size: 15px;
         font-weight: 600;
-        color: #dff7ea;
-        margin-bottom: 10px; /* space between heading and subheading */
+        letter-spacing: -0.01em;
       }
       .subtitle {
+        margin-top: 2px;
         font-size: 12px;
         color: var(--muted);
       }
 
+      /* ---------- Labels ---------- */
+      .label {
+        display: block;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted-2);
+        margin-bottom: 7px;
+      }
+
+      /* ---------- Search ---------- */
       .search {
-        margin-top: 12px;
-        display: flex;
-        gap: 8px;
-        align-items: center;
+        flex: 0 0 auto;
+        position: relative;
       }
-
-      .search input[type="search"] {
-        flex: 1;
+      .search input {
+        width: 100%;
         background: var(--surface);
-        border: 1px solid rgba(255, 255, 255, 0.03);
-        color: inherit;
+        border: 1px solid var(--border);
+        color: var(--text);
         padding: 10px 12px;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         outline: none;
+        font: inherit;
         font-size: 13px;
+        transition: border-color 0.12s, box-shadow 0.12s;
+      }
+      .search input::placeholder {
+        color: var(--muted-2);
+      }
+      .search input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
       }
 
-      .list {
-        margin-top: 12px;
-        max-height: 360px;
-        overflow: auto;
-        padding: 6px 6px 28px 6px; /* extra bottom padding so last item is visible */
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+      /* ---------- Results list ---------- */
+      .results {
+        flex: 1 1 auto;
+        min-height: 80px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        padding: 4px;
       }
-
       .item {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 12px;
-        padding: 10px;
-        border-radius: 8px;
-        background: transparent;
+        padding: 9px 10px;
+        border-radius: 7px;
         cursor: pointer;
-        transition: background 0.12s, transform 0.06s;
         border: 1px solid transparent;
-      }
-      .item:focus {
-        outline: none;
-        box-shadow: inset 0 0 0 1px rgba(61, 217, 167, 0.08);
+        transition: background 0.1s;
       }
       .item:hover {
-        background: var(--item-hover);
-        transform: translateY(-1px);
+        background: var(--surface-2);
       }
-
-      .left {
+      .item.selected {
+        background: var(--accent-soft);
+        border-color: rgba(109, 124, 255, 0.4);
+      }
+      .item .symbol {
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
         display: flex;
         align-items: center;
-        flex: 1 1 auto; /* allow left column to shrink when available width is small */
-        min-width: 0; /* allow text to truncate inside flex */
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 600;
+        background: var(--surface-3);
+        border-radius: 7px;
+        color: var(--text);
       }
-
-      .meta {
-        display: flex;
-        flex-direction: column;
-        min-width: 0; /* enable truncation on long country names */
+      .item.selected .symbol {
+        background: var(--accent);
+        color: #fff;
       }
-      .country {
+      .item .meta {
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+      .item .name {
         font-size: 13px;
         font-weight: 500;
-        color: #d8deda;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .code {
-        font-size: 12px;
+      .item .sub {
+        font-size: 11px;
         color: var(--muted);
-        margin-top: 2px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-
-      .symbol {
-        font-weight: 700;
-        font-size: 18px;
-        color: var(--accent);
-        min-width: 48px;
-        text-align: right;
-        flex-shrink: 0;
+      .empty {
+        padding: 24px 12px;
+        text-align: center;
+        color: var(--muted-2);
+        font-size: 12px;
       }
 
-      .empty {
-        padding: 18px;
+      /* ---------- Controls panel (scrolls if needed) ---------- */
+      .panel {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      /* ---------- Segmented control ---------- */
+      .segmented {
+        display: flex;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 3px;
+        gap: 3px;
+      }
+      .segmented button {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 7px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.12s, color 0.12s;
+      }
+      .segmented button:hover {
+        color: var(--text);
+      }
+      .segmented button.active {
+        background: var(--surface-3);
+        color: var(--text);
+      }
+
+      /* ---------- Generate settings ---------- */
+      #generateSettings {
+        display: none;
+        flex-direction: column;
+        gap: 14px;
+      }
+      #generateSettings.visible {
+        display: flex;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .field {
+        flex: 1;
+        min-width: 0;
+      }
+      .field input {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 9px 11px;
+        border-radius: var(--radius-sm);
+        outline: none;
+        font: inherit;
+        font-size: 13px;
+        transition: border-color 0.12s, box-shadow 0.12s;
+      }
+      .field input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+      }
+      .field input.invalid {
+        border-color: var(--danger);
+      }
+
+      /* ---------- Footer / Apply ---------- */
+      .footer {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .apply {
+        width: 100%;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 11px 16px;
+        border-radius: var(--radius-sm);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.12s, opacity 0.12s;
+      }
+      .apply:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+      .apply:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .status {
+        min-height: 16px;
+        font-size: 12px;
         text-align: center;
         color: var(--muted);
       }
-
-      .footer {
-        margin-top: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      .status.success {
+        color: var(--success);
       }
-      .btn {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        color: var(--muted);
-        padding: 8px 10px;
+      .status.error {
+        color: var(--danger);
+      }
+
+      /* ---------- Scrollbar (subtle) ---------- */
+      .results::-webkit-scrollbar {
+        width: 8px;
+      }
+      .results::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
         border-radius: 8px;
-        cursor: pointer;
+        border: 2px solid var(--surface);
       }
-      .btn.primary {
-        background: linear-gradient(
-          90deg,
-          rgba(61, 217, 167, 0.12),
-          rgba(24, 160, 251, 0.08)
-        );
-        color: var(--accent);
-        border: none;
-      }
-
-      /* hide scrollbar while preserving scroll behavior */
-      body::-webkit-scrollbar {
-        display: none;
-        width: 0;
-        height: 0;
-      }
-      .list {
-        -ms-overflow-style: none !important; /* IE/Edge */
-        scrollbar-width: none !important; /* Firefox */
-      }
-      .list::-webkit-scrollbar {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
+      .results::-webkit-scrollbar-track {
+        background: transparent;
       }
     </style>
   </head>
+
   <body>
-    <div class="card" role="dialog" aria-label="Insert currency symbol">
-      <div class="header">
+    <div class="app">
+      <header class="header">
+        <div class="title">Currency symbols</div>
+        <div class="subtitle">Insert symbols or generate values into text layers</div>
+      </header>
+
+      <div class="search">
+        <input
+          id="search"
+          type="text"
+          placeholder="Search country, currency, or code…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <div id="results" class="results" role="listbox" aria-label="Currencies"></div>
+
+      <div class="panel">
         <div>
-          <div class="title">Currency Symbols</div>
-          <div class="subtitle">
-            Select a text layer, then select a country to insert its symbol
+          <span class="label">Action</span>
+          <div class="segmented" id="actionToggle" role="tablist">
+            <button type="button" data-action="insert-symbol" class="active">
+              Insert Symbol
+            </button>
+            <button type="button" data-action="generate">Generate Values</button>
+          </div>
+        </div>
+
+        <div id="generateSettings">
+          <div>
+            <span class="label">Value range</span>
+            <div class="row">
+              <div class="field">
+                <input id="minValue" type="number" value="100" min="0" placeholder="Min" />
+              </div>
+              <div class="field">
+                <input id="maxValue" type="number" value="50000" min="0" placeholder="Max" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <span class="label">Decimals</span>
+              <div class="segmented" id="decimalsToggle">
+                <button type="button" data-decimals="0" class="active">None</button>
+                <button type="button" data-decimals="2">2</button>
+              </div>
+            </div>
+            <div class="field">
+              <span class="label">Format</span>
+              <div class="segmented" id="formatToggle">
+                <button type="button" data-format="symbol" class="active">Symbol</button>
+                <button type="button" data-format="code">Code</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="search">
-        <input
-          id="query"
-          type="search"
-          placeholder="Search country, code, or symbol"
-          autocomplete="off"
-        />
-      </div>
-
-      <div id="list" class="list" role="list"></div>
-
-      <!-- footer removed as requested -->
+      <footer class="footer">
+        <button id="apply" class="apply" disabled>Apply</button>
+        <div id="status" class="status">Select a currency to begin</div>
+      </footer>
     </div>
 
     <script>
-      // Modern dark-mode UI for currency insertion
-      let currencies = [];
-      let selectedIndex = -1;
+      "use strict";
 
-      const listEl = document.getElementById("list");
-      const queryEl = document.getElementById("query");
+      // ---------- Application state ----------
+      const state = {
+        currencies: [],
+        selected: null, // CurrencyEntry
+        action: "insert-symbol", // "insert-symbol" | "generate"
+        decimals: 0, // 0 | 2
+        format: "symbol", // "symbol" | "code"
+      };
 
-      function escapeHtml(s) {
-        return String(s || "")
+      // ---------- Element references ----------
+      const els = {
+        search: document.getElementById("search"),
+        results: document.getElementById("results"),
+        actionToggle: document.getElementById("actionToggle"),
+        generateSettings: document.getElementById("generateSettings"),
+        decimalsToggle: document.getElementById("decimalsToggle"),
+        formatToggle: document.getElementById("formatToggle"),
+        minValue: document.getElementById("minValue"),
+        maxValue: document.getElementById("maxValue"),
+        apply: document.getElementById("apply"),
+        status: document.getElementById("status"),
+      };
+
+      // ---------- Helpers ----------
+      function escapeHtml(value) {
+        return String(value == null ? "" : value)
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
       }
 
-      function render(filtered) {
-        listEl.innerHTML = "";
-        if (!filtered || filtered.length === 0) {
-          const e = document.createElement("div");
-          e.className = "empty";
-          e.textContent = "No results";
-          listEl.appendChild(e);
+      function normalize(value) {
+        return String(value == null ? "" : value).toLowerCase();
+      }
+
+      function setStatus(message, kind) {
+        els.status.textContent = message;
+        els.status.className = "status" + (kind ? " " + kind : "");
+      }
+
+      // ---------- Rendering ----------
+      function filterCurrencies(query) {
+        const q = normalize(query).trim();
+        if (!q) return state.currencies;
+        return state.currencies.filter(function (c) {
+          return (
+            normalize(c.country).includes(q) ||
+            normalize(c.name).includes(q) ||
+            normalize(c.code).includes(q) ||
+            normalize(c.symbol).includes(q)
+          );
+        });
+      }
+
+      function renderResults(list) {
+        els.results.innerHTML = "";
+
+        if (!list.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "No currencies match your search";
+          els.results.appendChild(empty);
           return;
         }
 
-        filtered.forEach((c, idx) => {
+        const fragment = document.createDocumentFragment();
+        list.forEach(function (c) {
+          const isSelected =
+            state.selected && state.selected.code === c.code &&
+            state.selected.country === c.country;
+
           const item = document.createElement("div");
-          item.className = "item";
-          item.tabIndex = 0;
-          item.dataset.index = idx;
+          item.className = "item" + (isSelected ? " selected" : "");
+          item.setAttribute("role", "option");
+          item.setAttribute("aria-selected", isSelected ? "true" : "false");
+          item.innerHTML =
+            '<div class="symbol">' + escapeHtml(c.symbol) + "</div>" +
+            '<div class="meta">' +
+            '<div class="name">' + escapeHtml(c.name) + "</div>" +
+            '<div class="sub">' + escapeHtml(c.country) + " · " + escapeHtml(c.code) + "</div>" +
+            "</div>";
 
-          item.innerHTML = `
-            <div class="left">
-              <div class="meta"><div class="country">${escapeHtml(
-                c.country
-              )}</div><div class="code">${escapeHtml(c.code)}</div></div>
-            </div>
-            <div class="symbol">${escapeHtml(c.symbol)}</div>
-          `;
-
-          item.addEventListener("click", () => selectCurrency(c));
-          item.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") selectCurrency(c);
+          item.addEventListener("click", function () {
+            selectCurrency(c);
           });
-
-          listEl.appendChild(item);
+          fragment.appendChild(item);
         });
-        // reset selection index when list changes
-        selectedIndex = -1;
+        els.results.appendChild(fragment);
       }
 
-      function selectCurrency(c) {
+      function selectCurrency(currency) {
+        state.selected = currency;
+        renderResults(filterCurrencies(els.search.value));
+        els.apply.disabled = false;
+        setStatus(
+          currency.symbol + " " + currency.name + " (" + currency.code + ")",
+          null
+        );
+      }
+
+      // ---------- Segmented control wiring ----------
+      function wireSegmented(container, onChange) {
+        container.addEventListener("click", function (event) {
+          const button = event.target.closest("button");
+          if (!button || !container.contains(button)) return;
+          Array.prototype.forEach.call(container.children, function (child) {
+            child.classList.toggle("active", child === button);
+          });
+          onChange(button.dataset);
+        });
+      }
+
+      wireSegmented(els.actionToggle, function (data) {
+        state.action = data.action;
+        els.generateSettings.classList.toggle(
+          "visible",
+          state.action === "generate"
+        );
+      });
+
+      wireSegmented(els.decimalsToggle, function (data) {
+        state.decimals = Number(data.decimals);
+      });
+
+      wireSegmented(els.formatToggle, function (data) {
+        state.format = data.format;
+      });
+
+      // ---------- Search ----------
+      els.search.addEventListener("input", function (event) {
+        renderResults(filterCurrencies(event.target.value));
+      });
+
+      // ---------- Apply ----------
+      function readGenerateSettings() {
+        const min = Number(els.minValue.value);
+        const max = Number(els.maxValue.value);
+
+        const minOk = els.minValue.value !== "" && Number.isFinite(min);
+        const maxOk = els.maxValue.value !== "" && Number.isFinite(max);
+
+        els.minValue.classList.toggle("invalid", !minOk);
+        els.maxValue.classList.toggle("invalid", !maxOk);
+
+        if (!minOk || !maxOk) {
+          return { error: "Enter valid minimum and maximum values." };
+        }
+        if (min > max) {
+          els.minValue.classList.add("invalid");
+          els.maxValue.classList.add("invalid");
+          return { error: "Minimum cannot be greater than maximum." };
+        }
+
+        return {
+          settings: {
+            min: min,
+            max: max,
+            decimals: state.decimals,
+            format: state.format,
+          },
+        };
+      }
+
+      els.apply.addEventListener("click", function () {
+        if (!state.selected) {
+          setStatus("Select a currency first.", "error");
+          return;
+        }
+
+        // Default settings are only relevant to "generate"; insert ignores them.
+        let settings = {
+          min: 100,
+          max: 50000,
+          decimals: state.decimals,
+          format: state.format,
+        };
+
+        if (state.action === "generate") {
+          const result = readGenerateSettings();
+          if (result.error) {
+            setStatus(result.error, "error");
+            return;
+          }
+          settings = result.settings;
+        }
+
+        setStatus("Applying…", null);
         parent.postMessage(
           {
             pluginMessage: {
-              type: "insert-symbol",
-              symbol: c.symbol,
-              code: c.code,
+              type: "apply",
+              action: state.action,
+              currency: state.selected,
+              settings: settings,
             },
           },
           "*"
         );
-      }
+      });
 
-      function normalize(s) {
-        return (s || "").toString().toLowerCase();
-      }
-      function filter(q) {
-        const nq = normalize(q);
-        if (!nq) return currencies.slice();
-        return currencies.filter(
-          (c) =>
-            normalize(c.country).includes(nq) ||
-            normalize(c.code).includes(nq) ||
-            normalize(c.symbol).includes(nq)
-        );
-      }
-
-      onmessage = (event) => {
-        const msg = event.data && (event.data.pluginMessage || event.data);
+      // ---------- Messages from the main thread ----------
+      window.onmessage = function (event) {
+        const msg = event.data && event.data.pluginMessage;
         if (!msg) return;
-        if (msg.type === "currencies") {
-          currencies = msg.currencies || [];
-          render(currencies);
+
+        if (msg.type === "init") {
+          state.currencies = msg.currencies || [];
+          renderResults(state.currencies);
+        }
+
+        if (msg.type === "result") {
+          setStatus(msg.message, msg.status);
         }
       };
 
-      queryEl.addEventListener("input", (e) => render(filter(e.target.value)));
-
-      // keyboard shortcuts
-      document.addEventListener("keydown", (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-          e.preventDefault();
-          queryEl.focus();
-          queryEl.select();
-        }
-        // navigate list
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          focusNext();
-        }
-        if (e.key === "ArrowUp") {
-          e.preventDefault();
-          focusPrev();
-        }
-        if (e.key === "Enter" && document.activeElement === queryEl) {
-          e.preventDefault(); // insert first if available
-          const list = listEl.querySelectorAll(".item");
-          if (list.length > 0) list[0].click();
-        }
-      });
-
-      function focusNext() {
-        const items = Array.from(listEl.querySelectorAll(".item"));
-        if (items.length === 0) return;
-        selectedIndex = Math.min(items.length - 1, selectedIndex + 1);
-        items[selectedIndex].focus();
-      }
-      function focusPrev() {
-        const items = Array.from(listEl.querySelectorAll(".item"));
-        if (items.length === 0) return;
-        selectedIndex = Math.max(0, selectedIndex - 1);
-        items[selectedIndex].focus();
-      }
-
-      // No footer buttons in this UI; insertion is performed by clicking an item or pressing Enter.
-
-      // initial focus
-      queryEl.focus();
+      // ---------- Init ----------
+      els.search.focus();
     </script>
   </body>
 </html>
