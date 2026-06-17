@@ -6,3 +6,6 @@ node_modules
 out/
 dist/
 code.js
+
+# Claude Code local (machine-specific) settings
+.claude/settings.local.json
